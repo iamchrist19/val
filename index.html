@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Valentines Day</title>
+  <title>Valentine's Day</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .gradient-background {
-      background: rgb(255, 208, 229);
       background: linear-gradient(180deg, rgba(255, 208, 229, 1) 0%, rgba(255, 232, 242, 1) 36%, rgba(255, 255, 255, 1) 100%);
     }
 
@@ -16,22 +15,21 @@
     }
 
     @keyframes bounce2 {
-      0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-      }
-      40% {
-        transform: translateY(-20px);
-      }
-      60% {
-        transform: translateY(-10px);
-      }
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-20px); }
+      60% { transform: translateY(-10px); }
+    }
+
+    /* Smooth transition for button growth */
+    #yesButton {
+      transition: all 0.3s ease-in-out;
     }
   </style>
 </head>
 <body class="gradient-background">
   <div class="flex items-center justify-center h-screen">
     <div class="flex flex-col items-center p-4">
-      <img id="imageDisplay" src="./images/image1.gif" alt="Cute kitten with flowers" class="rounded-md h-[300px]" style="object-fit: cover;" />
+      <img id="imageDisplay" src="./images/image1.gif" alt="Cute kitten with flowers" class="rounded-md h-[300px] transition-opacity duration-300" style="object-fit: cover;" />
       <h2 id="valentineQuestion" class="text-4xl font-bold italic text-[#bd1e59] my-4">Will you be my Valentine?</h2>
       <div class="flex gap-4 pt-[20px] items-center" id="responseButtons">
         <button id="yesButton"
@@ -48,16 +46,18 @@
 
   <script type="module">
     import confetti from 'https://cdn.skypack.dev/canvas-confetti';
+    
     const yesButton = document.getElementById('yesButton');
     const noButton = document.getElementById('noButton');
     const imageDisplay = document.getElementById('imageDisplay');
     const valentineQuestion = document.getElementById('valentineQuestion');
     const responseButtons = document.getElementById('responseButtons');
-  
+
     let noClickCount = 0;
-    let buttonHeight = 48; // Starting height in pixels
+    let buttonHeight = 48; // Initial height
     let buttonWidth = 80;
-    let fontSize = 20; // Starting font size in pixels
+    let fontSize = 20; // Initial font size
+
     const imagePaths = [
       "./images/image1.gif",
       "./images/image2.gif",
@@ -67,29 +67,57 @@
       "./images/image6.gif",
       "./images/image7.gif"
     ];
-  
+
+    const buttonTexts = ["No", "Are you sure?", "Wifeyyy please!", "Don't do this to me :(", "You're breaking my heart", "I'm gonna cry..."];
+
     noButton.addEventListener('click', function() {
       if (noClickCount < 5) {
         noClickCount++;
-        imageDisplay.src = imagePaths[noClickCount];
-        buttonHeight += 35; // Increase height by 5px on each click
+
+        // First, fade out the image
+        imageDisplay.style.opacity = "0";
+
+        setTimeout(() => {
+          // Then, change the image source
+          imageDisplay.src = imagePaths[noClickCount];
+
+          // Wait for image to load, then fade it back in
+          imageDisplay.onload = () => {
+            imageDisplay.style.opacity = "1";
+          };
+        }, 300); // Delay to match transition
+
+        // Increase button size smoothly
+        buttonHeight += 35;
         buttonWidth += 35;
-        fontSize += 25; // Increase font size by 1px on each click
-        yesButton.style.height = `${buttonHeight}px`; // Update button height
+        fontSize += 25;
+
+        yesButton.style.height = `${buttonHeight}px`;
         yesButton.style.width = `${buttonWidth}px`;
-        yesButton.style.fontSize = `${fontSize}px`; // Update font size
+        yesButton.style.fontSize = `${fontSize}px`;
+
         if (noClickCount < 6) {
-          noButton.textContent = ["No", "Are you sure?", "Wifeyyy please!", "Don't do this to me :(", "You're breaking my heart", "I'm gonna cry..."][noClickCount];
+          noButton.textContent = buttonTexts[noClickCount];
         }
       }
     });
-  
+
     yesButton.addEventListener('click', () => {
-      imageDisplay.src = './images/image7.gif'; // Change to image7.gif
-      valentineQuestion.textContent = "Yayyy!! I LOVEEE YOUUU SM"; // Change the question text
-      responseButtons.style.display = 'none'; // Hide both buttons
-      confetti(); // Trigger confetti animation
+      // Smooth transition for final scene
+      imageDisplay.style.opacity = "0";
+
+      setTimeout(() => {
+        imageDisplay.src = './images/image7.gif';
+        valentineQuestion.textContent = "Yayyy!! I LOVEEE YOUUU SM";
+        responseButtons.style.display = 'none';
+
+        imageDisplay.onload = () => {
+          imageDisplay.style.opacity = "1";
+        };
+
+        confetti();
+      }, 300);
     });
-  </script>  
+  </script>
 </body>
 </html>
